@@ -36,5 +36,6 @@ def create_app():
 
     from app.routes import vendor_bp
     app.register_blueprint(vendor_bp, url_prefix="/vendors")
+    print(app.url_map)
 
     return app
