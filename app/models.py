@@ -16,7 +16,7 @@ class Vendor(db.Model):
     account_number = db.Column(db.String(255), nullable=False)
     mpesa_number = db.Column(db.String(20), nullable=True)
     is_active = db.Column(db.Boolean, default=False)
-    documents = db.relationship("Document", backpopulate="vendor", lazy=True)
+    documents = db.relationship("Document", backref="vendor", lazy=True)
 
     def __repr__(self):
         return f"<Vendor {self.name}>"
