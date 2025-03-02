@@ -46,24 +46,27 @@ def create_vendor():
 @vendor_bp.route("/<int:vendor_id>/documents", methods=["POST"])
 @jwt_required()
 def upload_document(vendor_id):
-    data = request.get_json()
-    errors = document_schema.validate(data)
-    if errors:
-        return jsonify(errors), 400
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
 
     document = Document(
-        filename=data["filename"],
-        file_url=data["file_url"],
+        filename=file.filename,
+        file_url=f'/uploads/{file.filename}',
         vendor_id=vendor_id
     )
     db.session.add(document)
     db.session.commit()
+
     return jsonify(document_schema.dump(document)), 201
 
 @vendor_bp.route("/<int:vendor_id>/activate", methods=["PATCH"])
 @jwt_required()
-def toggle_vendor_activation(id):
-    vendor = Vendor.query.get_or_404(id)
+def toggle_vendor_activation(vendor_id):
+    vendor = Vendor.query.get_or_404(vendor_id)
     vendor.is_active = not vendor.is_active
     db.session.commit()
     status = "activated" if vendor.is_active else "deactivated"
@@ -85,8 +88,8 @@ def get_vendor(vendor_id):
 
 @vendor_bp.route('/<int:vendor_id>', methods=['PUT'])
 @jwt_required()
-def update_vendor(id):
-    vendor = Vendor.query.get_or_404(id)
+def update_vendor(vendor_id):
+    vendor = Vendor.query.get_or_404(vendor_id)
     data = request.get_json()
     for key, value in data.items():
         setattr(vendor, key, value)
@@ -96,8 +99,8 @@ def update_vendor(id):
 
 @vendor_bp.route('/<int:vendor_id>', methods=['DELETE'])
 @jwt_required()
-def delete_vendor(id):
-    vendor = Vendor.query.get_or_404(id)
+def delete_vendor(vendor_id):
+    vendor = Vendor.query.get_or_404(vendor_id)
     db.session.delete(vendor)
     db.session.commit()
     return jsonify({"message": "Vendor deleted"}), 200

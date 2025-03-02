@@ -1,15 +1,17 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask_migrate import Migrate
+
 from dotenv import load_dotenv
+from app.extensions import db
+from app.models import create_tables
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 
 import os
 
 load_dotenv()
-db = SQLAlchemy()
-migrate = Migrate()
+
+
 
 def create_app():
     app = Flask(__name__)
@@ -27,15 +29,19 @@ def create_app():
     app.config['JWT_HEADER_NAME'] = 'Authorization'
     app.config['JWT_HEADER_TYPE'] = 'Bearer'
 
+    
+
+    
+    
+    db.init_app(app)
+  
     JWTManager(app)
 
     
-
-    db.init_app(app)
-    migrate.init_app(app, db)
-
     from app.routes import vendor_bp
     app.register_blueprint(vendor_bp, url_prefix="/vendors")
-    print(app.url_map)
-
+    #print(app.url_map)
+    with app.app_context():
+        create_tables()
+    
     return app
