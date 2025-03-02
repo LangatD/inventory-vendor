@@ -6,5 +6,5 @@ migrate = Migrate(app, db)
 
 if __name__ == "__main__":
     from os import getenv
-    port = int(getenv("PORT", 8080))  
+    port = int(getenv("PORT", 5555))  
     app.run(host="0.0.0.0", port=port, debug=True)
