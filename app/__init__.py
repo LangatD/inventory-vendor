@@ -23,7 +23,7 @@ def create_app():
     db_port = os.getenv("DB_PORT")
     db_name = os.getenv("POSTGRES_DB")
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}?sslmode=require"
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
     app.config['JWT_SECRET_KEY'] = 'inventory2030'  
     app.config['JWT_TOKEN_LOCATION'] = ['headers']  
     app.config['JWT_HEADER_NAME'] = 'Authorization'
