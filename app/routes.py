@@ -29,15 +29,21 @@ def create_vendor():
         name=data["name"],
         email=data["email"],
         phone=data["phone"],
-        address=data["address"],
-        postal_code=data["postal_code"],
+        bio=data.get("bio"),
+        kra_pin=data["kra_pin"],
+        is_active=data.get("is_active", False),
+        address=data.get("address"),
+        city=data.get("city"),
+        postal_code=data.get("postal_code"),
         county=data["county"],
         country=data["country"],
-        kra_pin=data["kra_pin"],
         bank_name=data["bank_name"],
         account_number=data["account_number"],
-        mpesa_number=data.get("mpesa_number"),
-        is_active=data.get("is_active", False)
+        mpesa_paybill=data.get("mpesa_paybill"),
+        buy_goods_till=data.get("buy_goods_till"),
+        contact_person_name=data.get("contact_person_name"),
+        contact_person_email=data.get("contact_person_email"),
+        contact_person_phone=data.get("contact_person_phone")
     )
     db.session.add(new_vendor)
     db.session.commit()
@@ -76,8 +82,7 @@ def toggle_vendor_activation(vendor_id):
 #@jwt_required()
 def get_vendors():
     vendors = Vendor.query.all()
-    return jsonify(vendor_schema.dump(vendors,many=True)), 200
-
+    return jsonify(vendor_schema.dump(vendors, many=True)), 200
 
 @vendor_bp.route('/<int:vendor_id>', methods=['GET'])
 #@jwt_required()
@@ -85,17 +90,19 @@ def get_vendor(vendor_id):
     vendor = Vendor.query.get_or_404(vendor_id)
     return jsonify(vendor_schema.dump(vendor)), 200
 
-
 @vendor_bp.route('/<int:vendor_id>', methods=['PUT'])
 #@jwt_required()
 def update_vendor(vendor_id):
     vendor = Vendor.query.get_or_404(vendor_id)
     data = request.get_json()
+    allowed_fields = [
+        "name", "email", "phone", "bio", "kra_pin", "is_active", "address", "city", "postal_code", "county", "country", "bank_name", "account_number", "mpesa_paybill", "buy_goods_till", "contact_person_name", "contact_person_email", "contact_person_phone"
+    ]
     for key, value in data.items():
-        setattr(vendor, key, value)
+        if key in allowed_fields:
+            setattr(vendor, key, value)
     db.session.commit()
     return jsonify(vendor_schema.dump(vendor)), 200
-
 
 @vendor_bp.route('/<int:vendor_id>', methods=['DELETE'])
 #@jwt_required()
