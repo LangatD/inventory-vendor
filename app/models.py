@@ -22,8 +22,9 @@ class Vendor(db.Model):
     contact_person_name = db.Column(db.String(255))
     contact_person_email = db.Column(db.String(255))
     contact_person_phone = db.Column(db.String(20))
-    documents = db.relationship("Document", backref="vendor", lazy=True)
+    documents = db.relationship('Document', backref='vendor', cascade='all, delete-orphan')
 
+    orders = db.relationship('Orders', backref='vendor', lazy='dynamic')
 class Document(db.Model):
     __tablename__ = "documents"
 
@@ -32,6 +33,27 @@ class Document(db.Model):
     file_url = db.Column(db.String(255), nullable=False)
     vendor_id = db.Column(db.Integer, db.ForeignKey("vendors.id"), nullable=False)
 
+class Orders(db.Model):
+    __tablename__ = 'orders'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    order_name = db.Column(db.String(50), nullable=False)
+    order_description = db.Column(db.String(250), nullable=False)
+    name = db.Column(db.String(50), nullable=False)
+    cost = db.Column(db.Float, nullable=False)
+    vendor_id = db.Column(db.Integer, db.ForeignKey('vendors.id'), nullable=False)
+    vat = db.Column(db.Float, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.String(50), nullable=False)
+    date_ordered = db.Column(db.Date, nullable=False)
+    payment_status = db.Column(db.String(50), nullable=False)
+    dispatch_status = db.Column(db.String(50), nullable=False)
+    delivery_charges = db.Column(db.Float, nullable=True)
+    reason = db.Column(db.String(50), nullable=True)
+    initialiser = db.Column(db.String(50), nullable=True)
+    
+    Vendor= db.relationship('Vendor',back_populates='orders')
 
 def create_tables():
     with db.engine.connect() as connection:

@@ -10,6 +10,9 @@ from flask_jwt_extended import JWTManager, jwt_required, create_access_token, ge
 import os
 
 load_dotenv()
+def set_upload_folder(app):
+    app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
+
 
 
 
@@ -22,7 +25,7 @@ def create_app():
     db_host = os.getenv("POSTGRES_HOST")
     db_port = os.getenv("DB_PORT")
     db_name = os.getenv("POSTGRES_DB")
-
+     
     app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
     app.config['JWT_SECRET_KEY'] = 'inventory2030'  
     app.config['JWT_TOKEN_LOCATION'] = ['headers']  
@@ -30,7 +33,7 @@ def create_app():
     app.config['JWT_HEADER_TYPE'] = 'Bearer'
 
     
-
+    set_upload_folder(app)
     
     
     db.init_app(app)
