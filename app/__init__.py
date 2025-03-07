@@ -5,14 +5,11 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from app.extensions import db
 from app.models import create_tables
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
+from flask_jwt_extended import JWTManager,  get_jwt_identity
 
 import os
 
 load_dotenv()
-def set_upload_folder(app):
-    app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
-
 
 
 
@@ -33,7 +30,8 @@ def create_app():
     app.config['JWT_HEADER_TYPE'] = 'Bearer'
 
     
-    set_upload_folder(app)
+    app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
+    app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024 
     
     
     db.init_app(app)

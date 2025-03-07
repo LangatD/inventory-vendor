@@ -31,6 +31,7 @@ class Document(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(255), nullable=False)
     file_url = db.Column(db.String(255), nullable=False)
+    filetype = db.Column(db.String(255), nullable=False)
     vendor_id = db.Column(db.Integer, db.ForeignKey("vendors.id"), nullable=False)
 
 class Orders(db.Model):
@@ -53,7 +54,7 @@ class Orders(db.Model):
     reason = db.Column(db.String(50), nullable=True)
     initialiser = db.Column(db.String(50), nullable=True)
     
-    Vendor= db.relationship('Vendor',back_populates='orders')
+    #vendor= db.relationship('Vendor',back_populates='orders')
 
 def create_tables():
     with db.engine.connect() as connection:
