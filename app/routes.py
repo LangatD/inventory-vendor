@@ -15,7 +15,7 @@ document_schema = DocumentSchema()
 
 
 @vendor_bp.route("/", methods=["POST"])
-@jwt_required()
+#@jwt_required()
 def create_vendor():
     data = request.get_json()
     errors = vendor_schema.validate(data)
@@ -35,7 +35,7 @@ def create_vendor():
 
 
 @vendor_bp.route("/<int:vendor_id>/documents", methods=["POST"])
-@jwt_required()
+#@jwt_required()
 def upload_document(vendor_id):
     db.session.expire_all()
     allowed_extensions = {'.pdf', '.docx', '.xlsx'}
@@ -69,7 +69,7 @@ def upload_document(vendor_id):
     return jsonify(document_schema.dump(document)), 201
 
 @vendor_bp.route("/<int:vendor_id>/activate", methods=["PATCH"])
-@jwt_required()
+#@jwt_required()
 def toggle_vendor_activation(vendor_id):
     vendor = Vendor.query.get_or_404(vendor_id)
     vendor.is_active = not vendor.is_active
@@ -78,19 +78,19 @@ def toggle_vendor_activation(vendor_id):
     return jsonify({"message": f"Vendor {status}"}), 200
 
 @vendor_bp.route('/', methods=['GET'])
-@jwt_required()
+#@jwt_required()
 def get_vendors():
     vendors = Vendor.query.all()
     return jsonify(vendor_schema.dump(vendors, many=True)), 200
 
 @vendor_bp.route('/<int:vendor_id>', methods=['GET'])
-@jwt_required()
+#@jwt_required()
 def get_vendor(vendor_id):
     vendor = Vendor.query.get_or_404(vendor_id)
     return jsonify(vendor_schema.dump(vendor)), 200
 
 @vendor_bp.route('/<int:vendor_id>', methods=['PUT'])
-@jwt_required()
+#@jwt_required()
 def update_vendor(vendor_id):
     vendor = Vendor.query.get_or_404(vendor_id)
     data = request.get_json()
@@ -118,7 +118,7 @@ def update_vendor(vendor_id):
 
 
 @vendor_bp.route('/<int:vendor_id>', methods=['DELETE'])
-@jwt_required()
+#@jwt_required()
 def delete_vendor(vendor_id):
     vendor = Vendor.query.get_or_404(vendor_id)
     db.session.delete(vendor)
@@ -126,7 +126,7 @@ def delete_vendor(vendor_id):
     return jsonify({"message": "Vendor deleted"}), 200
 
 @vendor_bp.route('/<int:vendor_id>/orders', methods=['GET'])
-@jwt_required()
+#@jwt_required()
 def get_vendor_orders(vendor_id):
     vendor = Vendor.query.get(vendor_id)
     if not vendor:
@@ -140,7 +140,7 @@ def get_vendor_orders(vendor_id):
     return jsonify(orders_data)
 
 @vendor_bp.route('/<int:vendor_id>/documents/<int:document_id>/download', methods=['GET'])
-@jwt_required()
+#@jwt_required()
 def download_vendor_document(vendor_id, document_id):
     document = Document.query.filter_by(id=document_id, vendor_id=vendor_id).first()
     if not document:
@@ -153,7 +153,7 @@ def download_vendor_document(vendor_id, document_id):
     return send_file(file_path, as_attachment=True, download_name=document.filename or "downloaded file")
 
 @vendor_bp.route('/<int:vendor_id>/documents/<int:document_id>', methods=['DELETE'])
-@jwt_required()
+#@jwt_required()
 def delete_document(vendor_id, document_id):
     document = Document.query.filter_by(id=document_id, vendor_id=vendor_id).first()
 
